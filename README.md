@@ -33,6 +33,7 @@ quasar build
 See [Configuring quasar.conf.js](https://v2.quasar.dev/quasar-cli/quasar-conf-js).
 
 # babylonjs-real-sun-moon library
+#### No NPM published yet
 
 The RealSun library code is located in the `library` folder. 
 ```bash
@@ -44,3 +45,5 @@ To build the library use
 ```bash
 npm run build
 ```
+
+The library gets compiled to the `dist` folder.
