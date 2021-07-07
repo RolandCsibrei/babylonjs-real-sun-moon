@@ -175,7 +175,10 @@ export default defineComponent({
       let nowOffset = 0;
       let add = 100000;
       scene.onBeforeRenderObservable.add(() => {
-        nowOffset += add;
+        let fps = engine.getFps();
+        if (fps === 0) fps = 60;
+        if (fps > 144) fps = 144;
+        nowOffset += add * (144 / fps);
 
         if (realSun && props.isPlaying === true) {
           realSun.setDateTimeInMillis(Date.now() + nowOffset, false);
