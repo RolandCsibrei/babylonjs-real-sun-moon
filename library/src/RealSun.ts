@@ -283,7 +283,7 @@ export class RealSun {
     sun.range = this._radius;
     sun.intensity = this._options.sunMaxIntensity ?? 1;
     this.calcSunAngles();
-
+    this.calcSunPosition();
     sun.parent = this._transform;
 
     return sun;
@@ -312,10 +312,13 @@ export class RealSun {
       return;
     }
 
-    this.calcSunAngles();
-
     this._beforeRenderObservable = this._scene.onBeforeRenderObservable.add(
-      () => this.moveSun()
+      () => {
+        this.setDateTimeInMillis(Date.now());
+        this.calcSunAngles();
+        this.calcSunPosition();
+        this.moveSun();
+      }
     );
   }
 

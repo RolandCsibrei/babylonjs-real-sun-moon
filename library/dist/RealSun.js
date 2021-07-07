@@ -65,7 +65,6 @@ var RealSun = /** @class */ (function () {
         this.moveSun();
     };
     RealSun.prototype.calcSunPosition = function () {
-        // altitude?: number) {
         var positions = suncalc_1.default.getPosition(this._now, this._lat, this._lng);
         this._angles = positions;
         this._transformParent.rotation.x = positions.altitude;
@@ -100,6 +99,7 @@ var RealSun = /** @class */ (function () {
         }
         if (this._now > this._sunset && this._now < this._sunsetEnd) {
             // sun going down
+            // remove this to stop shuffling
             this._sunName = stars_1.getRandomStarName();
             this._isSunset = true;
             var period = this._sunsetEnd - this._sunset;
@@ -112,8 +112,6 @@ var RealSun = /** @class */ (function () {
         }
         if (this._now > this._sunsetEnd) {
             // night
-            if (this._isNight === false) {
-            }
             this._isNight = true;
             this._intensity = 0;
         }
@@ -188,6 +186,7 @@ var RealSun = /** @class */ (function () {
         sun.range = this._radius;
         sun.intensity = (_a = this._options.sunMaxIntensity) !== null && _a !== void 0 ? _a : 1;
         this.calcSunAngles();
+        this.calcSunPosition();
         sun.parent = this._transform;
         return sun;
     };
@@ -209,8 +208,12 @@ var RealSun = /** @class */ (function () {
             console.error('No sun. Call createDefaultSun() to create one or provide one in the constructor.');
             return;
         }
-        this.calcSunAngles();
-        this._beforeRenderObservable = this._scene.onBeforeRenderObservable.add(function () { return _this.moveSun(); });
+        this._beforeRenderObservable = this._scene.onBeforeRenderObservable.add(function () {
+            _this.setDateTimeInMillis(Date.now());
+            _this.calcSunAngles();
+            _this.calcSunPosition();
+            _this.moveSun();
+        });
     };
     //
     RealSun.getCurrentDate = function () {

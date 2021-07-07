@@ -1,6 +1,6 @@
 {
   "name": "babylonjs-real-sun-moon",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Sun/Moon manipulating library for BabylonJS",
   "main": "./dist/RealSun.js",
   "types": "./dist/RealSun.d.ts",

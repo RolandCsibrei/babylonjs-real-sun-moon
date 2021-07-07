@@ -62,6 +62,7 @@ export default defineComponent({
         realSun?.hideAxes();
       }
     },
+
     isPlaying(val) {
       if (val === true) {
       } else {
@@ -83,9 +84,11 @@ export default defineComponent({
       canvas.height = window.innerHeight;
 
       const engine = new Engine(canvas);
-      var scene = new Scene(engine);
+      const scene = new Scene(engine);
 
+      //
       // load model
+      //
       const base =
         location.hostname === 'localhost' || location.hostname === '127.0.0.1'
           ? '/models/'
@@ -97,15 +100,11 @@ export default defineComponent({
       );
       const root = loaded.meshes[0];
       root.rotation = Vector3.Zero();
+
       //
-
-      const ground = scene.getMeshByName('Plane_Baked');
-      if (ground) {
-        ground.receiveShadows = true;
-      }
-      const building = scene.getMeshByName('BuildingA_Baked');
+      // RealSun stuff
+      //
       const sunTransform = new TransformNode('sunTransform', scene);
-
       const lat = 47.53217606106968;
       const lng = 19.06586400848718;
       const radius = 40;
@@ -121,14 +120,25 @@ export default defineComponent({
       );
 
       const sun = realSun.createDefaultSunLight();
-      realSun.showAxes();
       realSun.createDefaultSunMesh(true);
+      realSun.showAxes();
       realSun.showGadgets();
 
+      // uncomment this to set the sun to the current real position on each frame
+      // you have to remove the manual controlling part in the render obesrvable callback below
+      // TODO: implement every-n-th-frame parameter
       // realSun.startTimeSync();
 
+      //
       // setup shadow generator with our sun
-      var shadowGenerator = new ShadowGenerator(1024, sun);
+      //
+      const ground = scene.getMeshByName('Plane_Baked');
+      if (ground) {
+        ground.receiveShadows = true;
+      }
+      const building = scene.getMeshByName('BuildingA_Baked');
+
+      const shadowGenerator = new ShadowGenerator(1024, sun);
       if (building) {
         shadowGenerator.addShadowCaster(building);
       }
@@ -141,8 +151,10 @@ export default defineComponent({
       shadowGenerator.useExponentialShadowMap = true;
       shadowGenerator.setDarkness(0);
 
-      // setup camera
-      var camera = new ArcRotateCamera(
+      //
+      // setup a camera
+      //
+      const camera = new ArcRotateCamera(
         'camera1',
         -0.7,
         1,
@@ -154,15 +166,18 @@ export default defineComponent({
       camera.attachControl(canvas, true);
       camera.useAutoRotationBehavior = true;
 
+      //
       // ambient light
+      //
       const ambientLight = new HemisphericLight(
         'ambientLight',
         new Vector3(0, 1, 0),
         scene
       );
       ambientLight.intensity = 0.7;
-
+      //
       // night light
+      //
       const nightLight = new PointLight(
         'nightLight',
         new Vector3(1.8, 19, 0),
@@ -172,28 +187,36 @@ export default defineComponent({
       nightLight.specular = new Color3(0, 1, 0);
       nightLight.intensity = 0.1;
 
+      //
       let nowOffset = 0;
       let add = 100000;
       scene.onBeforeRenderObservable.add(() => {
+        // just some speed normalization
         let fps = engine.getFps();
         if (fps === 0) fps = 60;
         if (fps > 144) fps = 144;
         nowOffset += add * (144 / fps);
 
         if (realSun && props.isPlaying === true) {
+          // manually control RealSun with these methods
+          // this is the same what realSun.syncWithTime() does, but doesn't add an offset to Date.now()
           realSun.setDateTimeInMillis(Date.now() + nowOffset, false);
-          realSun.calcSunAngles();
+          realSun.calcSunAngles(); // you should always calculate the angles prior to the position
           realSun.calcSunPosition();
-          realSun.moveSun();
+          realSun.moveSun(); // this moves the transform
+
           // slow down the motion while in sunset or sunrise
           const info = realSun.getInfo();
-          emit('realSunInfoReceived', info);
           if (info.isSunset === true || info.isSunrise === true) {
             add = 400;
           } else {
             add = 50000;
           }
 
+          // emit to parent component
+          emit('realSunInfoReceived', info);
+
+          // setting the light intensities base on the realSun.intensity value
           scene.clearColor = new Color4(0.2, 0.4, 0.7, 1).multiply(
             new Color4(info.intensity, info.intensity, info.intensity, 1)
           );
@@ -205,6 +228,8 @@ export default defineComponent({
       // void scene.debugLayer.show({ overlay: true });
 
       const onWindowResize = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
         engine.resize();
       };
 
