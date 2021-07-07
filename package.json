@@ -1,8 +1,8 @@
 {
   "name": "babylonjs-real-sun2",
   "version": "0.0.1",
-  "description": "A Quasar Framework app",
-  "productName": "Quasar App",
+  "description": "BabylonJS RealSun",
+  "productName": "BabylonJS RealSun",
   "author": "Roland Csibrei <roland.csibrei@nascor.tech>",
   "private": true,
   "scripts": {

@@ -37,6 +37,10 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
+    isPlaying: {
+      type: Boolean,
+      default: true,
+    },
     realSunParameters: {
       type: Object as unknown as PropType<RealSunParamaters>,
       required: false,
@@ -58,13 +62,18 @@ export default defineComponent({
         realSun?.hideAxes();
       }
     },
+    isPlaying(val) {
+      if (val === true) {
+      } else {
+      }
+    },
 
     realSunParameters(val) {
       realSun?.setParameters(val);
     },
   },
 
-  setup(_, { emit }) {
+  setup(props, { emit }) {
     onMounted(async () => {
       const canvas = document.getElementsByClassName(
         'bjs-canvas'
@@ -80,7 +89,7 @@ export default defineComponent({
       const base =
         location.hostname === 'localhost' || location.hostname === '127.0.0.1'
           ? '/models/'
-          : 'https://babylonjs.nascor.tech/boxes/';
+          : 'https://babylonjs.nascor.tech/real-sun/models/';
       const loaded = await SceneLoader.AppendAsync(
         base,
         'real-sun-building-trees.glb',
@@ -168,7 +177,7 @@ export default defineComponent({
       scene.onBeforeRenderObservable.add(() => {
         nowOffset += add;
 
-        if (realSun) {
+        if (realSun && props.isPlaying === true) {
           realSun.setDateTimeInMillis(Date.now() + nowOffset, false);
           realSun.calc();
           realSun.calcSunPosition();

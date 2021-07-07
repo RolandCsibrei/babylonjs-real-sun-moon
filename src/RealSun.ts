@@ -31,6 +31,7 @@ export interface RealSunParamaters {
   lng: number;
   northDirection: { x: number; y: number; z: number };
   radius: number;
+  time: number;
 }
 
 export interface RealSunInfo {
@@ -128,8 +129,19 @@ export class RealSun {
       params.northDirection.y,
       params.northDirection.z
     );
+    this.setDateTimeInMillis(params.time, false);
     this.hideAxes();
     this.showAxes();
+    if (this._sunLight) {
+      this._sunLight.position = this.getPositionOffset();
+    }
+
+    if (this._sunMesh) {
+      this._sunMesh.position = this.getPositionOffset();
+    }
+    this.calc();
+    this.calcSunPosition();
+    this.moveSun();
   }
 
   public calcSunPosition() {
@@ -169,6 +181,7 @@ export class RealSun {
     }
     if (this._now > this._sunset && this._now < this._sunsetEnd) {
       // sun going down
+      this._sunName = getRandomStarName();
       this._isSunset = true;
       const period = this._sunsetEnd - this._sunset;
       const offset = this._sunsetEnd - this._now;
@@ -180,6 +193,8 @@ export class RealSun {
 
     if (this._now > this._sunsetEnd) {
       // night
+      if (this._isNight === false) {
+      }
       this._isNight = true;
       this._intensity = 0;
     } else {
@@ -445,7 +460,7 @@ export class RealSun {
       'axisLine',
       {
         points: [
-          centerOfRotation.add(this._northDirection.scale(-50)),
+          Vector3.ZeroReadOnly,
           centerOfRotation.add(this._northDirection.scale(50)),
         ],
       },
