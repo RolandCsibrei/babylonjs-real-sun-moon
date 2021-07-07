@@ -1,9 +1,12 @@
 {
-  "name": "babylonjs-real-sun2",
-  "version": "0.0.1",
-  "description": "BabylonJS RealSun",
-  "productName": "BabylonJS RealSun",
-  "author": "Roland Csibrei <roland.csibrei@nascor.tech>",
+  "name": "babylonjs-real-sun-moon-example",
+  "version": "1.0.0",
+  "description": "BabylonJS RealSunMoon example",
+  "productName": "BabylonJS RealSun example",
+  "author": {
+    "name": "Roland Csibrei",
+    "email": "roland.csibrei@nascor.tech"
+  },
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.ts,.vue ./",
@@ -12,6 +15,7 @@
   "dependencies": {
     "@babylonjs/core": "^4.2.0",
     "@babylonjs/inspector": "^4.2.0",
+    "babylonjs-real-sun-moon": "file:./library/",
     "@quasar/extras": "^1.0.0",
     "babylonjs-gui": "^4.2.0",
     "core-js": "^3.6.5",

@@ -176,7 +176,7 @@
 </template>
 
 <script lang="ts">
-import { RealSunInfo, RealSunParamaters } from 'src/RealSun';
+import { RealSunInfo, RealSunParamaters } from 'library/src/RealSun';
 import { defineComponent, ref } from 'vue';
 export default defineComponent({
   name: 'MainLayout',

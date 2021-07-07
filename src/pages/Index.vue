@@ -23,7 +23,7 @@ import '@babylonjs/core/Debug/debugLayer';
 import '@babylonjs/inspector';
 
 import { defineComponent, onMounted, PropType } from 'vue';
-import { RealSun, RealSunParamaters } from 'src/RealSun';
+import { RealSun, RealSunParamaters } from 'babylonjs-real-sun-moon';
 
 let realSun: RealSun | null = null;
 export default defineComponent({
@@ -182,7 +182,7 @@ export default defineComponent({
 
         if (realSun && props.isPlaying === true) {
           realSun.setDateTimeInMillis(Date.now() + nowOffset, false);
-          realSun.calc();
+          realSun.calcSunAngles();
           realSun.calcSunPosition();
           realSun.moveSun();
           // slow down the motion while in sunset or sunrise

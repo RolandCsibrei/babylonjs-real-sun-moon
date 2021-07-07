@@ -1,0 +1,16 @@
+{
+  "name": "babylonjs-real-sun-moon",
+  "version": "1.0.0",
+  "description": "Sun/Moon manipulating library for BabylonJS",
+  "main": "./dist/RealSun.js",
+  "types": "./dist/RealSun.d.ts",
+  "scripts": {
+    "build": "tsc -p .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@babylonjs/core": "^4.2.0"
+  }
+}

@@ -1,6 +1,6 @@
-import SunCalc from '../src/suncalc';
-import { getRandomStarName } from '../src/stars';
-import { get } from 'src/get';
+import SunCalc from './suncalc';
+import { getRandomStarName } from './stars';
+import { get } from './get';
 
 import {
   Color3,
@@ -77,6 +77,9 @@ export class RealSun {
   private _angles!: RealSunAngles;
 
   private _transformParent: TransformNode;
+  private _axesParent: TransformNode | null = null;
+  private _sunMesh: Mesh | null = null;
+  private _sunMaterial: PBRMaterial | null = null;
 
   private _now!: number;
 
@@ -102,7 +105,7 @@ export class RealSun {
     date.setHours(0, 0, 0, 0);
     this._now = date.getTime();
 
-    this.calc();
+    this.calcSunAngles();
     this.calcSunPosition();
 
     if (this._sunLight) {
@@ -113,7 +116,7 @@ export class RealSun {
   public setDateTimeInMillis(date: number, recalc = true) {
     this._now = date;
     if (recalc) {
-      this.calc();
+      this.calcSunAngles();
       this.calcSunPosition();
       this.moveSun();
     }
@@ -139,13 +142,12 @@ export class RealSun {
     if (this._sunMesh) {
       this._sunMesh.position = this.getPositionOffset();
     }
-    this.calc();
+    this.calcSunAngles();
     this.calcSunPosition();
     this.moveSun();
   }
 
   public calcSunPosition() {
-    // altitude?: number) {
     const positions = SunCalc.getPosition(this._now, this._lat, this._lng);
     this._angles = positions;
     this._transformParent.rotation.x = positions.altitude;
@@ -155,7 +157,7 @@ export class RealSun {
     }
   }
 
-  public calc() {
+  public calcSunAngles() {
     this._times = SunCalc.getTimes(this._now, this._lat, this._lng, 0);
     this._sunrise = get<Date>(this._times, 'sunrise').getTime();
     this._sunriseEnd = get<Date>(this._times, 'sunriseEnd').getTime();
@@ -181,8 +183,11 @@ export class RealSun {
     }
     if (this._now > this._sunset && this._now < this._sunsetEnd) {
       // sun going down
+      // remove this to stop shuffling
       this._sunName = getRandomStarName();
+
       this._isSunset = true;
+
       const period = this._sunsetEnd - this._sunset;
       const offset = this._sunsetEnd - this._now;
       const intensityStep = 1 / period;
@@ -193,8 +198,6 @@ export class RealSun {
 
     if (this._now > this._sunsetEnd) {
       // night
-      if (this._isNight === false) {
-      }
       this._isNight = true;
       this._intensity = 0;
     } else {
@@ -204,7 +207,7 @@ export class RealSun {
 
   //
 
-  getInfo() {
+  public getInfo() {
     const info: RealSunInfo = {
       name: this._sunName,
       radius: this._radius,
@@ -237,11 +240,11 @@ export class RealSun {
     return info;
   }
 
-  getNow() {
+  public getNow() {
     return this._now;
   }
 
-  setSun(sun: DirectionalLight) {
+  public setSun(sun: DirectionalLight) {
     this._sunLight = sun;
   }
 
@@ -255,18 +258,18 @@ export class RealSun {
     this._sunLight.intensity = this._intensity * maxIntensitySun;
   }
 
-  showGadgets() {
+  public showGadgets() {
     this.createDefaultSunMesh();
   }
 
-  hideGadgets() {
+  public hideGadgets() {
     if (this._sunMesh) {
       this._sunMesh.dispose();
       this._sunMesh = null;
     }
   }
 
-  createDefaultSunLight(): DirectionalLight {
+  public createDefaultSunLight(): DirectionalLight {
     const sunDirection = Vector3.Zero();
 
     const sun = new DirectionalLight(
@@ -279,14 +282,14 @@ export class RealSun {
     sun.position = this.getPositionOffset();
     sun.range = this._radius;
     sun.intensity = this._options.sunMaxIntensity ?? 1;
-    this.calc();
+    this.calcSunAngles();
 
     sun.parent = this._transform;
 
     return sun;
   }
 
-  getPositionOffset() {
+  private getPositionOffset() {
     const radius = this._radius;
     return this._northDirection
       .normalize()
@@ -295,7 +298,7 @@ export class RealSun {
 
   //
 
-  stopTimeSync(): void {
+  public stopTimeSync(): void {
     if (this._beforeRenderObservable) {
       this._scene.onBeforeRenderObservable.remove(this._beforeRenderObservable);
     }
@@ -309,7 +312,7 @@ export class RealSun {
       return;
     }
 
-    this.calc();
+    this.calcSunAngles();
 
     this._beforeRenderObservable = this._scene.onBeforeRenderObservable.add(
       () => this.moveSun()
@@ -317,24 +320,18 @@ export class RealSun {
   }
 
   //
-
-  public static getCurrentTimeInMillis() {
-    return Date.now().valueOf();
-  }
   public static getCurrentDate() {
     return Date.now();
   }
+
   public static getCurrentDateShifted(shiftByMillis: number) {
-    const shifted = this.getCurrentTimeInMillis() + shiftByMillis * 10000;
+    const shifted = this.getCurrentDate() + shiftByMillis * 10000;
     return new Date(shifted);
   }
 
   //
 
-  private _sunMesh: Mesh | null = null;
-  private _sunMaterial: PBRMaterial | null = null;
-
-  createDefaultSunMesh(addGlowLayer = false) {
+  public createDefaultSunMesh(addGlowLayer = false) {
     if (this._sunMesh) return;
 
     const name = `RealSun-Mesh-${this._sunName}`;
@@ -393,8 +390,6 @@ export class RealSun {
     plane.parent = parent;
     return plane;
   }
-
-  private _axesParent: TransformNode | null = null;
 
   public hideAxes() {
     if (!this._axesParent) return;
