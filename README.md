@@ -1,6 +1,8 @@
-# BabylonJS RealSun (babylonjs-real-sun)
+# babylonjs-real-sun-moon example
 
-BabylonJS RealSun
+BabylonJS RealSunMoon
+
+https://forum.babylonjs.com/t/realsun-position-your-star-sun-like-a-pro/22212
 
 ## Install the dependencies
 
@@ -29,3 +31,16 @@ quasar build
 ### Customize the configuration
 
 See [Configuring quasar.conf.js](https://v2.quasar.dev/quasar-cli/quasar-conf-js).
+
+# babylonjs-real-sun-moon library
+
+The RealSun library code is located in the `library` folder. 
+```bash
+cd library
+npm i
+```
+
+To build the library use
+```bash
+npm run build
+```
