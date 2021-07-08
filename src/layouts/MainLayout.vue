@@ -7,6 +7,11 @@
           flat
           round
           icon="menu"
+          :class="
+            $q.platform.is.mobile
+              ? 'animated heartBeat infinite drawerButton'
+              : ''
+          "
           @click="isDrawerOpened = !isDrawerOpened"
         />
 
@@ -17,7 +22,7 @@
           BabylonJS RealSun
         </q-toolbar-title>
         <q-btn
-          label="Play"
+          :label="$q.platform.is.mobile ? '' : 'Play'"
           @click="isDemoPlaying = true"
           color="green"
           icon="play_arrow"
@@ -25,7 +30,7 @@
           :disable="isDemoPlaying"
         />
         <q-btn
-          label="Pause"
+          :label="$q.platform.is.mobile ? '' : 'Pause'"
           @click="isDemoPlaying = false"
           color="grey"
           icon="pause"
@@ -35,16 +40,18 @@
         />
         <q-space />
         <q-btn
-          label="Toggle sun"
+          :label="$q.platform.is.mobile ? '' : 'Toggle sun'"
           @click="isGadgetsVisible = !isGadgetsVisible"
           color="blue"
+          icon="wb_sunny"
           :dense="true"
         />
         <q-btn
-          label="Toggle axes"
+          :label="$q.platform.is.mobile ? '' : 'Toggle axes'"
           @click="isAxesVisible = !isAxesVisible"
           color="light-blue"
           :dense="true"
+          icon="perm_data_setting"
           class="on-right"
         />
         <q-btn
@@ -53,6 +60,11 @@
           round
           icon="menu"
           @click="isRightDrawerOpened = !isRightDrawerOpened"
+          :class="
+            $q.platform.is.mobile
+              ? 'animated heartBeat infinite drawerButton'
+              : ''
+          "
           class="on-right"
         />
       </q-toolbar>
@@ -177,10 +189,12 @@
 
 <script lang="ts">
 import { RealSunInfo, RealSunParamaters } from 'library/src/RealSun';
+import { useQuasar } from 'quasar';
 import { defineComponent, ref } from 'vue';
 export default defineComponent({
   name: 'MainLayout',
   setup() {
+    const $q = useQuasar();
     const dateText = ref('');
     const timeText = ref('');
     const angleAzimuth = ref('');
@@ -263,11 +277,10 @@ export default defineComponent({
       return new Date(millis).toLocaleTimeString();
     };
 
-    const isDrawerOpened = ref(true);
-    const isRightDrawerOpened = ref(true);
+    const isDrawerOpened = ref(!$q.platform.is.mobile);
+    const isRightDrawerOpened = ref(!$q.platform.is.mobile);
     const isGadgetsVisible = ref(true);
     const isAxesVisible = ref(true);
-    const isShowParameterDialog = ref(true);
     const isDemoPlaying = ref(true);
     const isEdit = ref(false);
 
@@ -277,7 +290,6 @@ export default defineComponent({
       isRightDrawerOpened,
       isGadgetsVisible,
       isAxesVisible,
-      isShowParameterDialog,
       isDemoPlaying,
       isEdit,
       setParameters,
@@ -312,5 +324,8 @@ export default defineComponent({
 <style>
 div.q-time__clock-circle {
   overflow: visible;
+}
+.drawerButton {
+  --animate-duration: 2s;
 }
 </style>
