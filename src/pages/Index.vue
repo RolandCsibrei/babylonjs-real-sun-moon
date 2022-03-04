@@ -92,7 +92,7 @@ export default defineComponent({
       const base =
         location.hostname === 'localhost' || location.hostname === '127.0.0.1'
           ? '/models/'
-          : 'https://babylonjs.nascor.tech/real-sun/models/';
+          : 'models/';
       const loaded = await SceneLoader.AppendAsync(
         base,
         'real-sun-building-trees.glb',
@@ -191,11 +191,7 @@ export default defineComponent({
       let nowOffset = 0;
       let add = 100000;
       scene.onBeforeRenderObservable.add(() => {
-        // just some speed normalization
-        let fps = engine.getFps();
-        if (fps === 0) fps = 60;
-        if (fps > 144) fps = 144;
-        nowOffset += add * (144 / fps);
+        nowOffset += add * scene.getAnimationRatio();
 
         if (realSun && props.isPlaying === true) {
           // manually control RealSun with these methods

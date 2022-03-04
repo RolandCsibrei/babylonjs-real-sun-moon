@@ -158,7 +158,7 @@
           </template>
         </q-input>
         <div class="q-ma-md" />
-        <q-time :disable="!isEdit" v-model="time" flat />
+        <q-time :disable="!isEdit" v-model="time" flat format24h />
 
         <q-input label="Lat" v-model="lat" />
         <q-input label="Lng" v-model="lng" />
@@ -220,8 +220,10 @@ export default defineComponent({
 
     const realSunInfoReceived = (info: RealSunInfo) => {
       realSunInfo.value = { ...info };
+
       const sunNow = new Date(info.now ?? 0);
       dateText.value = sunNow.toLocaleDateString();
+
       let localeTimeString = sunNow.toLocaleTimeString();
       const localeTimeStringSplitted = localeTimeString.split(':');
       localeTimeString =

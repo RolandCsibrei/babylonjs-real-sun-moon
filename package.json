@@ -5,7 +5,7 @@
   "productName": "BabylonJS RealSun example",
   "author": {
     "name": "Roland Csibrei",
-    "email": "roland.csibrei@nascor.tech"
+    "email": "roland@babylonjs.xyz"
   },
   "private": true,
   "scripts": {
@@ -13,11 +13,11 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "@babylonjs/core": "^4.2.0",
-    "@babylonjs/inspector": "^4.2.0",
+    "@babylonjs/core": "^4.2.1",
+    "@babylonjs/inspector": "^4.2.1",
     "babylonjs-real-sun-moon": "file:./library/",
     "@quasar/extras": "^1.0.0",
-    "babylonjs-gui": "^4.2.0",
+    "babylonjs-gui": "^4.2.1",
     "core-js": "^3.6.5",
     "lodash": "^4.17.21",
     "quasar": "^2.0.0"
